@@ -4,12 +4,12 @@ We will now conduct a simiplified grid security and protection analysis using Po
 
 Network Area Diagram
 
- <img src="network_area_diagram.svg" width="50%">
+ <img src="network_area_diagram.svg" width="100%">
 
 
 Single Line Diagram
 
- <img src="single_line_diagram.svg" width="50%">
+ <img src="single_line_diagram.svg" width="100%">
 
 
 
@@ -26,7 +26,7 @@ The pypowsybl library in python is used for simulation.
 ##### 1.1: Line 1 Outage (Bus_Slack - Bus1)
 This simulation models the behaviour when the main feeder (or primary transmission line) is disconnected from the Slack (external grid)
 
- <img src="outputs/base_case_lf.png" width="50%">
+ <img src="outputs/base_case_lf.png" width="100%">
 
 
 
