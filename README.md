@@ -15,15 +15,44 @@ Single Line Diagram
 
 
 ## Simulation
-### Load Flow Validation
+The pypowsybl library in python is used for simulation.
+
+### Load Flow Validation (Base Case)
+ <img src="outputs/base_case_lf.png" width="50%">
 
 
 ### N-1 Contingency Analysis
+#### Case 1: Line Outages
+##### 1.1: Line 1 Outage (Bus_Slack - Bus1)
+This simulation models the behaviour when the main feeder (or primary transmission line) is disconnected from the Slack (external grid)
+
+ <img src="outputs/base_case_lf.png" width="50%">
+
+
+
+##### 1.2: Line 2 Outage (Bus1 - Bus2)
+This simulation models the behaviour when the internal trunk line that between local load centers fails
+
+
+
+##### 1.3: Line 3 Outage (Bus2 - Bus3)
+This simulation models the behaviour when the dedicated feeder connecting the micro-hydro generator is disconnected
+
+
+
+#### Case 2: Transformer Outage
+
+
+
+#### Case 3: Generator Outage
+
+
+
 
 
 ### Fault Protection
 
 
-## Vulnerabilities Identified
+## Summary of Vulnerabilities Identified
 
 ## Proposed Protection Schemes
