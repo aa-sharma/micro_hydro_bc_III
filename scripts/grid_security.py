@@ -7,7 +7,7 @@ Slack → Bus1 → Bus2 → Bus3 → Transformer → Micro-hydro (0.48 kV)
 """
 import pypowsybl as psb
 from pypowsybl.loadflow import VoltageInitMode
-
+from pypowsybl.loadflow import ComponentStatus
 
 class GridSecurity:
     def __init__(self):
@@ -84,6 +84,35 @@ class GridSecurity:
             voltage_regulator_on=False # PQ mode, ensures it doesn't fight the Slack
         )
 
+    def generate_visuals(self, filename_prefix="grid"):
+        print("\n--- Generating Network Diagrams ---")
+        
+        # 1. Global Network Area Diagram (Shows the whole topology)
+        # This renders the connections between voltage levels/substations
+        self.net.write_network_area_diagram_svg(f"{filename_prefix}_area.svg")
+        print(f"Global diagram saved to: {filename_prefix}_area.svg")
+
+        # 2. Detailed Single Line Diagram (SLD) for a specific Substation
+        # We'll use 'Sub_Hydro' since it has the transformer and generators
+
+        
+        sld_params = psb.network.SldParameters(
+            use_name=True,             # Uses "L1", "L2", etc.
+            # show_labels=True,          # Explicitly force equipment IDs to show
+            nodes_infos=True,          # Adds a legend in the corner
+            tooltip_enabled=True       # If viewing in a browser, hover to see the ID
+        )
+
+        # Generate SLD for the main substation
+        self.net.write_single_line_diagram_svg(
+            "Sub_Hydro", 
+            f"{filename_prefix}_substation.svg",
+            parameters=sld_params
+        )
+        print(f"Substation SLD saved to: {filename_prefix}_substation.svg")
+
+
+
     # -----------------------------
     # 2. BASE LOAD FLOW
     # -----------------------------
@@ -112,38 +141,16 @@ class GridSecurity:
         except Exception as e:
             print(f"An execution error occurred: {e}")
 
-    # -----------------------------
-    # 3. CONTINGENCY ANALYSIS
-    # -----------------------------
-    def run_contingencies(self):
-        print("\n==============================")
-        print("N-1 CONTINGENCY ANALYSIS")
-        print("==============================")
-
-        # Define contingencies
-        contingencies = psb.security.create_contingency_list()
-        # Line outage conditions
-        contingencies.add_line_contingency("LINE_1_2")
-        contingencies.add_line_contingency("LINE_2_3")
-        contingencies.add_line_contingency("LINE_0_1")
-        # Transformer outage condition
-        contingencies.add_transformer_contingency("TRAFO")
-        # Generator outage condition
-        contingencies.add_generator_contingency("HYDRO")
-        # Run security analysis
-        results = psb.security.run_ac_security_analysis(self.net, contingencies)
-
-        print(results)
-
 
     def line_outage(self, line_id):
         print(f"\nLINE OUTAGE (LINE-ID: {line_id})")
         self.net.update_lines(
-            id='LINE_1_2',
+            id=line_id,
             connected1=False,
             connected2=False
             )
-        result = psb.loadflow.run_ac(self.net)
+        self.run_analysis()
+        # result = psb.loadflow.run_ac(self.net)
 
     # -----------------------------
     # 4. SIMPLE SECURITY CHECKS
@@ -169,36 +176,66 @@ class GridSecurity:
         print(lines)
 
 
+    def run_security_analysis(self):
+        print("\n==============================")
+        print("N-1 CONTINGENCY ANALYSIS")
+        print("==============================")
+
+        # 1. Create the Security Analysis object
+        analysis = psb.security.create_analysis()
+
+        # 2. Add Contingencies (N-1)
+        # Use IDs of lines, transformers, and generators
+        analysis.add_single_element_contingency('L1', 'Outage_L1')                  # Line 1 outage
+        analysis.add_single_element_contingency('L2', 'Outage_L2')                  # Line 2 outage
+        analysis.add_single_element_contingency('L3', 'Outage_L3')                  # Line 3 outage
+        analysis.add_single_element_contingency('T1', 'Outage_T1')                  # Transformer outage
+        analysis.add_single_element_contingency('Hydro_Gen', 'Outage_Hydro')        # Generator outage
+
+        # 3. Add Monitored Elements
+        # This tells the solver to record V, P, and Q for these specific areas
+        analysis.add_monitored_elements(
+            voltage_level_ids=['VL_Main', 'VL_Hydro_HV', 'VL_Hydro_LV'],
+            branch_ids=['L1', 'L2', 'L3', 'T1']
+        )
+
+        # 4. Run the AC Analysis
+        # We pass the network here. Result will contain bus_results and branch_results
+        results = analysis.run_ac(self.net)
+        print(f"\nResults: {results}\n")
+
+        # 5. Display Security Violations (Overloads/Undervoltage)
+        print("\n--- Limit Violations ---")
+        if results.limit_violations is not None and not results.limit_violations.empty:
+            print(results.limit_violations)
+        else:
+            print("No limit violations detected.")
+
+        # 6. Detailed Bus Voltages (Check for Undervoltage)
+        print("\n--- Bus Voltages (Post-Contingency) ---")
+        # This DataFrame shows v_mag and v_angle for every contingency + bus combination
+        print(results.bus_results)
+
+        # 7. Detailed Branch Flows (Check for Overloads/Islanding)
+        print("\n--- Branch Flows ---")
+        print(results.branch_results)
+
+        # 8. Detect Supply Interruption / Islanding
+        # If a contingency leads to divergence or zero flow in branch results, 
+        # it indicates a supply interruption.
+        for cont_id, post_res in results.post_contingency_results.items():
+            print(f"\npost_res: {post_res}\n")
+            if not post_res.status != ComponentStatus.CONVERGED:
+                print(f"!! ALERT: Contingency {cont_id} caused load flow FAILURE (Supply Interruption)")
+
+
 
 if __name__ == "__main__":
     gs_obj = GridSecurity()
-    gs_obj.full_config_setup()
-    
-    # Use the Enum-based parameters that we established earlier
+    gs_obj.full_config_setup()    
     parameters = psb.loadflow.Parameters(voltage_init_mode=VoltageInitMode.UNIFORM_VALUES, distributed_slack=False, read_slack_bus=True)
+    gs_obj.generate_visuals()
     gs_obj.run_analysis()
-    
-    # try:
-    #     results = psb.loadflow.run_ac(gs_obj.net, parameters)
-    #     print(f"\nResults: {results}\n")
-        
-    #     if results[0].status_text == "Converged":
-    #         print("Load flow converged successfully!")
-    #         # Format output for readability
-    #         df_buses = gs_obj.net.get_buses()[['v_mag', 'v_angle', 'voltage_level_id']]
-    #         print("\n--- Bus Voltage Results ---")
-    #         print(df_buses.to_string())
+    gs_obj.run_security_analysis()
+    # gs_obj.line_outage(line_id='L1')
 
-
-    #         # gs_obj.run_loadflow()
-    #         # gs_obj.check_violations()
-    #         # gs_obj.run_contingencies()
-
-
-    #     else:
-    #         print(f"Load flow Failed: {results[0].status_text}")
-    #         if results[0].slack_bus_results:
-    #             print(f"Mismatch Details: {results[0].slack_bus_results}")
-                
-    # except Exception as e:
-    #     print(f"An execution error occurred: {e}")
