@@ -18,7 +18,7 @@ Single Line Diagram
 The pypowsybl library in python is used for simulation.
 
 ### Load Flow Validation (Base Case)
- <img src="outputs/base_case_lf.png" width="50%">
+ <img src="outputs/base_case_lf.png" width="100%">
 
 
 ### N-1 Contingency Analysis
