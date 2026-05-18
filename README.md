@@ -13,6 +13,6 @@ We will now conduct a simiplified grid security and protection analysis using Po
 ### Fault Protection
 
 
-## Identified Vulnerabilities
+## Vulnerabilities Identified
 
 ## Proposed Protection Schemes
