@@ -1,0 +1,139 @@
+{
+  "id": "microhydro_southwest_BC",
+  "name": "microhydro_southwest_BC",
+  "caseDate": "2026-01-01T00:00:00Z",
+  "forecastDistance": 0,
+  "substations": [
+    {
+      "id": "substation_1",
+      "name": "Main Substation",
+      "voltageLevels": [
+        {
+          "id": "vl_12_47",
+          "name": "12.47kV Level",
+          "nominalV": 12.47,
+          "highVoltageLimit": 1.05,
+          "lowVoltageLimit": 0.95,
+          "busbarSections": [
+            { "id": "slack_bus" },
+            { "id": "bus_1" },
+            { "id": "bus_2" },
+            { "id": "bus_3" }
+          ]
+        },
+        {
+          "id": "vl_0_48",
+          "name": "0.48kV Level",
+          "nominalV": 0.48,
+          "highVoltageLimit": 1.05,
+          "lowVoltageLimit": 0.95,
+          "busbarSections": [
+            { "id": "lv_bus" }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "lines": [
+    {
+      "id": "line_slack_1",
+      "name": "Slack to Bus 1",
+      "r": 0.40,
+      "x": 0.30,
+      "b": 3.14159e-6,
+      "length": 1.0,
+      "voltageLevelId1": "vl_12_47",
+      "voltageLevelId2": "vl_12_47",
+      "bus1": "slack_bus",
+      "bus2": "bus_1"
+    },
+    {
+      "id": "line_1_2",
+      "name": "Bus 1 to Bus 2",
+      "r": 0.40,
+      "x": 0.30,
+      "b": 3.14159e-6,
+      "length": 1.0,
+      "voltageLevelId1": "vl_12_47",
+      "voltageLevelId2": "vl_12_47",
+      "bus1": "bus_1",
+      "bus2": "bus_2"
+    },
+    {
+      "id": "line_2_3",
+      "name": "Bus 2 to Bus 3",
+      "r": 0.40,
+      "x": 0.30,
+      "b": 3.14159e-6,
+      "length": 1.0,
+      "voltageLevelId1": "vl_12_47",
+      "voltageLevelId2": "vl_12_47",
+      "bus1": "bus_2",
+      "bus2": "bus_3"
+    }
+  ],
+
+  "loads": [
+    {
+      "id": "load_1",
+      "name": "Load 1",
+      "p0": 0.04,
+      "q0": 0.015,
+      "voltageLevelId": "vl_12_47",
+      "bus": "bus_1"
+    },
+    {
+      "id": "load_2",
+      "name": "Load 2",
+      "p0": 0.03,
+      "q0": 0.01,
+      "voltageLevelId": "vl_12_47",
+      "bus": "bus_2"
+    },
+    {
+      "id": "load_3",
+      "name": "Load 3",
+      "p0": 0.05,
+      "q0": 0.02,
+      "voltageLevelId": "vl_12_47",
+      "bus": "bus_3"
+    }
+  ],
+
+  "twoWindingsTransformers": [
+    {
+      "id": "xfmr_hydro",
+      "name": "Hydro Step-Up Transformer",
+      "r": 0.012,
+      "x": 0.06,
+      "g": 0.0,
+      "b": 0.0,
+      "ratedU1": 12.47,
+      "ratedU2": 0.48,
+      "ratedS": 0.15,
+      "voltageLevelId1": "vl_12_47",
+      "voltageLevelId2": "vl_0_48",
+      "bus1": "bus_3",
+      "bus2": "lv_bus"
+    }
+  ],
+
+  "generators": [
+    {
+      "id": "micro_hydro_gen",
+      "name": "Micro-Hydro 100kW Generator",
+      "p": 0.1,
+      "q": -0.02,
+      "minP": 0.0,
+      "maxP": 0.1,
+      "targetV": 1.02,
+      "voltageLevelId": "vl_0_48",
+      "bus": "lv_bus"
+    }
+  ],
+
+  "shuntCompensators": [],
+  "danglingLines": [],
+  "hvdcLines": []
+}
