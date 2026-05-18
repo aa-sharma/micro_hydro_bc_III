@@ -92,6 +92,26 @@ class GridSecurity:
         print("\nBASE CASE LOAD FLOW COMPLETED")
         print(result)
 
+    def run_analysis(self):
+        parameters = psb.loadflow.Parameters(voltage_init_mode=VoltageInitMode.UNIFORM_VALUES, distributed_slack=False, read_slack_bus=True)
+        try:
+            results = psb.loadflow.run_ac(self.net, parameters)
+            print(f"\nResults: {results}\n")
+            if results[0].status_text == "Converged":
+                print("Load flow converged successfully!")
+                # Format output for readability
+                df_buses = gs_obj.net.get_buses()[['v_mag', 'v_angle', 'voltage_level_id']]
+                print("\n--- Bus Voltage Results ---")
+                print(df_buses.to_string())
+                self.run_loadflow()
+                self.check_violations()
+            else:
+                print(f"Load flow Failed: {results[0].status_text}")
+                if results[0].slack_bus_results:
+                    print(f"Mismatch Details: {results[0].slack_bus_results}")
+        except Exception as e:
+            print(f"An execution error occurred: {e}")
+
     # -----------------------------
     # 3. CONTINGENCY ANALYSIS
     # -----------------------------
@@ -102,17 +122,28 @@ class GridSecurity:
 
         # Define contingencies
         contingencies = psb.security.create_contingency_list()
-
+        # Line outage conditions
         contingencies.add_line_contingency("LINE_1_2")
         contingencies.add_line_contingency("LINE_2_3")
         contingencies.add_line_contingency("LINE_0_1")
+        # Transformer outage condition
         contingencies.add_transformer_contingency("TRAFO")
+        # Generator outage condition
         contingencies.add_generator_contingency("HYDRO")
-
         # Run security analysis
         results = psb.security.run_ac_security_analysis(self.net, contingencies)
 
         print(results)
+
+
+    def line_outage(self, line_id):
+        print(f"\nLINE OUTAGE (LINE-ID: {line_id})")
+        self.net.update_lines(
+            id='LINE_1_2',
+            connected1=False,
+            connected2=False
+            )
+        result = psb.loadflow.run_ac(self.net)
 
     # -----------------------------
     # 4. SIMPLE SECURITY CHECKS
@@ -145,28 +176,29 @@ if __name__ == "__main__":
     
     # Use the Enum-based parameters that we established earlier
     parameters = psb.loadflow.Parameters(voltage_init_mode=VoltageInitMode.UNIFORM_VALUES, distributed_slack=False, read_slack_bus=True)
+    gs_obj.run_analysis()
     
-    try:
-        results = psb.loadflow.run_ac(gs_obj.net, parameters)
-        print(f"\nResults: {results}\n")
+    # try:
+    #     results = psb.loadflow.run_ac(gs_obj.net, parameters)
+    #     print(f"\nResults: {results}\n")
         
-        if results[0].status_text == "Converged":
-            print("Load flow converged successfully!")
-            # Format output for readability
-            df_buses = gs_obj.net.get_buses()[['v_mag', 'v_angle', 'voltage_level_id']]
-            print("\n--- Bus Voltage Results ---")
-            print(df_buses.to_string())
+    #     if results[0].status_text == "Converged":
+    #         print("Load flow converged successfully!")
+    #         # Format output for readability
+    #         df_buses = gs_obj.net.get_buses()[['v_mag', 'v_angle', 'voltage_level_id']]
+    #         print("\n--- Bus Voltage Results ---")
+    #         print(df_buses.to_string())
 
 
-            gs_obj.run_loadflow()
-            gs_obj.check_violations()
-            gs_obj.run_contingencies()
+    #         # gs_obj.run_loadflow()
+    #         # gs_obj.check_violations()
+    #         # gs_obj.run_contingencies()
 
 
-        else:
-            print(f"Load flow Failed: {results[0].status_text}")
-            if results[0].slack_bus_results:
-                print(f"Mismatch Details: {results[0].slack_bus_results}")
+    #     else:
+    #         print(f"Load flow Failed: {results[0].status_text}")
+    #         if results[0].slack_bus_results:
+    #             print(f"Mismatch Details: {results[0].slack_bus_results}")
                 
-    except Exception as e:
-        print(f"An execution error occurred: {e}")
+    # except Exception as e:
+    #     print(f"An execution error occurred: {e}")
