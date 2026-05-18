@@ -1,0 +1,103 @@
+(.venv) aashna@Aashnas-MacBook-Pro scripts % python3 grid_security.py       
+
+--- Generating Network Diagrams ---
+Global diagram saved to: grid_area.svg
+Substation SLD saved to: grid_substation.svg
+
+Results: [ComponentResult(connected_component_num=0, synchronous_component_num=0, status=CONVERGED, status_text=Converged, iteration_count=1, reference_bus_id='VL_Hydro_HV_0', slack_bus_results=[SlackBusResult(id='VL_Hydro_HV_0', active_power_mismatch=0.020230310798914696)], distributed_active_power=0.0)]
+
+Load flow converged successfully!
+
+--- Bus Voltage Results ---
+                   v_mag   v_angle voltage_level_id
+id                                                 
+VL_Main_0      12.470000 -0.029845          VL_Main
+VL_Main_1      12.468797 -0.022476          VL_Main
+VL_Main_2      12.469118 -0.012159          VL_Main
+VL_Hydro_HV_0  12.470642  0.000000      VL_Hydro_HV
+VL_Hydro_LV_0   0.480025  1.293134      VL_Hydro_LV
+
+BASE CASE LOAD FLOW COMPLETED
+[ComponentResult(connected_component_num=0, synchronous_component_num=0, status=CONVERGED, status_text=Converged, iteration_count=1, reference_bus_id='VL_Hydro_HV_0', slack_bus_results=[SlackBusResult(id='VL_Hydro_HV_0', active_power_mismatch=0.020230310798914696)], distributed_active_power=0.0)]
+
+==============================
+VOLTAGE PROFILE
+==============================
+VL_Main_0 V = 12.47
+VL_Main_1 V = 12.468797113071373
+VL_Main_2 V = 12.469117882919006
+VL_Hydro_HV_0 V = 12.470641539695269
+VL_Hydro_LV_0 V = 0.4800246943908363
+
+==============================
+LINE FLOW CHECK
+==============================
+   name    r    x   g1   b1   g2   b2        p1        q1        i1        p2        q2        i2 voltage_level1_id voltage_level2_id    bus1_id        bus2_id  connected1  connected2
+id                                                                                                                                                                                     
+L1       0.4  0.3  0.0  0.0  0.0  0.0  0.000004  0.049998  2.314886  0.000002 -0.049994  2.314886           VL_Main           VL_Main  VL_Main_0      VL_Main_1        True        True
+L2       0.4  0.3  0.0  0.0  0.0  0.0 -0.039990  0.039996  2.618860  0.039998 -0.039990  2.618860           VL_Main           VL_Main  VL_Main_1      VL_Main_2        True        True
+L3       0.4  0.3  0.0  0.0  0.0  0.0 -0.069991  0.030005  3.526012  0.070006 -0.029994  3.526012           VL_Main       VL_Hydro_HV  VL_Main_2  VL_Hydro_HV_0        True        True
+
+==============================
+N-1 CONTINGENCY ANALYSIS
+==============================
+
+Results: <pypowsybl.security.impl.security_analysis_result.SecurityAnalysisResult object at 0x103728a60>
+
+
+--- Limit Violations ---
+No limit violations detected.
+
+--- Bus Voltages (Post-Contingency) ---
+                                                                    v_mag   v_angle
+contingency_id operator_strategy_id voltage_level_id bus_id                        
+                                    VL_Main          Bus_Slack  12.470000 -0.029845
+                                                     Bus_1      12.468797 -0.022476
+                                                     Bus_2      12.469118 -0.012159
+                                    VL_Hydro_HV      Bus_3      12.470642  0.000000
+                                    VL_Hydro_LV      Bus_LV      0.480025  1.293134
+Outage_T1                           VL_Main          Bus_Slack  12.470000 -0.021006
+                                                     Bus_1      12.469278 -0.016582
+                                                     Bus_2      12.470080 -0.009211
+                                    VL_Hydro_HV      Bus_3      12.472085  0.000000
+Outage_Hydro                        VL_Main          Bus_Slack  12.470000 -0.020006
+                                                     Bus_1      12.469332 -0.015916
+                                                     Bus_2      12.470188 -0.008878
+                                    VL_Hydro_HV      Bus_3      12.472248  0.000000
+                                    VL_Hydro_LV      Bus_LV      0.480209 -0.000882
+Outage_L3                           VL_Main          Bus_Slack  12.470000 -0.002946
+                                                     Bus_1      12.469519  0.000000
+                                                     Bus_2      12.468316 -0.001843
+
+--- Branch Flows ---
+                                                         p1        q1        i1            p2        q2          i2  flow_transfer
+contingency_id operator_strategy_id branch_id                                                                                     
+                                    L1         4.372833e-06  0.049998  2.314886  2.057601e-06 -0.049994    2.314886            NaN
+                                    L2        -3.998973e-02  0.039996  2.618860  3.999796e-02 -0.039990    2.618860            NaN
+                                    L3        -6.999148e-02  0.030005  3.526012  7.000640e-02 -0.029994    3.526012            NaN
+                                    T1        -9.977609e-02  0.021129  4.721747  1.002275e-01 -0.018872  122.667052            NaN
+Outage_T1                           L1         6.986810e-07  0.030013  1.389562  1.618376e-06 -0.030011    1.389562       0.000037
+                                    L2        -4.000022e-02  0.020010  2.070906  4.000537e-02 -0.020007    2.070906       0.000105
+                                    L3        -7.000397e-02  0.010006  3.274044  7.001683e-02 -0.009996    3.274044       0.000125
+Outage_Hydro                        L1         8.656296e-07  0.027753  1.284929  1.115622e-06 -0.027751    1.284929            NaN
+                                    L2        -3.999938e-02  0.017751  2.026211  4.000431e-02 -0.017747    2.026211            NaN
+                                    L3        -7.000258e-02  0.007746  3.260793  7.001534e-02 -0.007737    3.260793            NaN
+                                    T1        -1.576299e-04 -0.001143  0.053421  1.576877e-04  0.001143    1.387824            NaN
+Outage_L3                           L1         1.575277e-06  0.019989  0.925484 -5.474533e-07 -0.019988    0.925484       0.000040
+                                    L2         2.999476e-02  0.009997  1.463884 -2.999219e-02 -0.009995    1.463884      -0.999900
+
+post_res: PostContingencyResult(contingency_id='Outage_T1', status=CONVERGED, limit_violations=[0])
+
+
+post_res: PostContingencyResult(contingency_id='Outage_Hydro', status=CONVERGED, limit_violations=[0])
+
+
+post_res: PostContingencyResult(contingency_id='Outage_L1', status=SOLVER_FAILED, limit_violations=[0])
+
+
+post_res: PostContingencyResult(contingency_id='Outage_L3', status=CONVERGED, limit_violations=[0])
+
+
+post_res: PostContingencyResult(contingency_id='Outage_L2', status=SOLVER_FAILED, limit_violations=[0])
+
+(.venv) aashna@Aashnas-MacBook-Pro scripts % 
