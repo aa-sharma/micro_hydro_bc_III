@@ -48,11 +48,13 @@ This simulation models the behaviour when the dedicated feeder connecting the mi
 
 
 
+#### Summary of N-1 Contingency Analysis
 
-
-### Fault Protection
-
-
-## Summary of Vulnerabilities Identified
+| Contingency| Result | System Impact |
+| L1 Outage | Critical Failure | Blackout (main feeder lost) |
+| L2 Outage | Critical Failure | Partial supply interruption (disconnect from grid) |
+| L3 Outage | OK | Localized outage (only micro-hydro substation impacted) |
+| T1 Outage | OK | Localized outage (LV bus impacted) |
+| Micro-hydro Gen Outage | OK | Operational change (slack compensates for lost generation) |
 
 ## Proposed Protection Schemes
