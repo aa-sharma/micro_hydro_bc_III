@@ -1,217 +1,209 @@
+"""
+MICRO-HYDROPOWER DESIGN PART III
+GRID SECURITY, CONTINGENCY & PROTECTION ANALYSIS (POWSYBL)
+
+Matches Part II pandapower topology:
+Slack → Bus1 → Bus2 → Bus3 → Transformer → Micro-hydro (0.48 kV)
+"""
+
 import pypowsybl as pp
-import pandas as pd
+import pypowsybl.loadflow as lf
+import pypowsybl.security as sec
 
 
-# ============================================================
-# 1. BUILD NETWORK
-# ============================================================
+class HydroPowSyBlStudy:
+    def __init__(self):
+        self.network = None
 
-def build_network():
-    network = pp.network.create_empty()
+    # -----------------------------
+    # 1. BUILD NETWORK (MATCHES PANDAPOWER)
+    # -----------------------------
+    def build_network(self):
+        self.network = pp.network.create_empty()
 
-    # ----------------------------
-    # Substation
-    # ----------------------------
-    network.create_substations(id='SUB1')
+        # Substation
+        self.network.create_substations(id="S1")
 
-    # ----------------------------
-    # Voltage levels
-    # ----------------------------
-    network.create_voltage_levels(
-        id='MV',
-        substation_id='SUB1',
-        nominal_v=12.47,
-        topology_kind='BUS_BREAKER'
-    )
+        # HV Level (12.47 kV)
+        self.network.create_voltage_levels(
+            id="VL_HV",
+            substation_id="S1",
+            nominal_v=12.47,
+            topology_kind="BUS_BREAKER"
+        )
 
-    network.create_voltage_levels(
-        id='LV',
-        substation_id='SUB1',
-        nominal_v=0.48,
-        topology_kind='BUS_BREAKER'
-    )
+        # LV Level (0.48 kV)
+        self.network.create_voltage_levels(
+            id="VL_LV",
+            substation_id="S1",
+            nominal_v=0.48,
+            topology_kind="BUS_BREAKER"
+        )
 
-    # ----------------------------
-    # Buses
-    # ----------------------------
-    network.create_buses(id='BUS1', voltage_level_id='MV')
-    network.create_buses(id='BUS2', voltage_level_id='MV')
-    network.create_buses(id='BUS3', voltage_level_id='MV')
-    network.create_buses(id='BUS4', voltage_level_id='LV')
+        # -----------------------------
+        # BUSES (MATCHING YOUR MODEL)
+        # -----------------------------
+        self.network.create_buses(id="SLACK_BUS", voltage_level_id="VL_HV")
+        self.network.create_buses(id="BUS_1", voltage_level_id="VL_HV")
+        self.network.create_buses(id="BUS_2", voltage_level_id="VL_HV")
+        self.network.create_buses(id="BUS_3", voltage_level_id="VL_HV")
+        self.network.create_buses(id="BUS_LV", voltage_level_id="VL_LV")
 
-    # ----------------------------
-    # Utility Grid / Slack
-    # ----------------------------
-    network.create_generators(
-        id='GRID',
-        voltage_level_id='MV',
-        bus_id='BUS1',
-        target_p=0.0,
-        target_v=1.0,
-        min_p=-1000.0,
-        max_p=1000.0,
-        voltage_regulator_on=True
-    )
+        # -----------------------------
+        # EXTERNAL GRID (Slack)
+        # -----------------------------
+        self.network.create_voltage_source(
+            id="GRID",
+            bus_id="SLACK_BUS",
+            p=0.0,
+            q=0.0,
+            v=1.0,
+            angle=0.0
+        )
 
-    # ----------------------------
-    # Lines
-    # ----------------------------
-    network.create_lines(
-        id='L1',
-        voltage_level1_id='MV',
-        bus1_id='BUS1',
-        voltage_level2_id='MV',
-        bus2_id='BUS2',
-        r=0.05,
-        x=0.08,
-        g1=0,
-        b1=0,
-        g2=0,
-        b2=0
-    )
+        # -----------------------------
+        # LINES (same 1 km segments)
+        # -----------------------------
+        self.network.create_line(
+            id="LINE_0_1",
+            bus1_id="SLACK_BUS",
+            bus2_id="BUS_1",
+            r=0.40,
+            x=0.30,
+            g1=0.0,
+            b1=0.0
+        )
 
-    network.create_lines(
-        id='L2',
-        voltage_level1_id='MV',
-        bus1_id='BUS2',
-        voltage_level2_id='MV',
-        bus2_id='BUS3',
-        r=0.05,
-        x=0.08,
-        g1=0,
-        b1=0,
-        g2=0,
-        b2=0
-    )
+        self.network.create_line(
+            id="LINE_1_2",
+            bus1_id="BUS_1",
+            bus2_id="BUS_2",
+            r=0.40,
+            x=0.30,
+            g1=0.0,
+            b1=0.0
+        )
 
-    # ----------------------------
-    # Loads
-    # ----------------------------
-    network.create_loads(
-        id='LOAD1',
-        voltage_level_id='MV',
-        bus_id='BUS2',
-        p0=0.040,   # 40 kW
-        q0=0.010
-    )
+        self.network.create_line(
+            id="LINE_2_3",
+            bus1_id="BUS_2",
+            bus2_id="BUS_3",
+            r=0.40,
+            x=0.30,
+            g1=0.0,
+            b1=0.0
+        )
 
-    network.create_loads(
-        id='LOAD2',
-        voltage_level_id='MV',
-        bus_id='BUS3',
-        p0=0.035,   # 35 kW
-        q0=0.008
-    )
+        # -----------------------------
+        # LOADS (MATCH YOUR MW VALUES)
+        # -----------------------------
+        self.network.create_load(
+            id="LOAD_1",
+            bus_id="BUS_1",
+            p0=0.04,
+            q0=0.015
+        )
 
-    network.create_loads(
-        id='LOAD3',
-        voltage_level_id='LV',
-        bus_id='BUS4',
-        p0=0.020,   # 20 kW
-        q0=0.005
-    )
+        self.network.create_load(
+            id="LOAD_2",
+            bus_id="BUS_2",
+            p0=0.03,
+            q0=0.01
+        )
 
-    # ----------------------------
-    # Transformer
-    # 12.47 kV -> 0.48 kV
-    # ----------------------------
-    network.create_2_windings_transformers(
-        id='T1',
-        voltage_level1_id='MV',
-        bus1_id='BUS3',
-        voltage_level2_id='LV',
-        bus2_id='BUS4',
-        rated_u1=12.47,
-        rated_u2=0.48,
-        rated_s=0.150,   # 150 kVA
-        r=0.01,
-        x=0.04
-    )
+        self.network.create_load(
+            id="LOAD_3",
+            bus_id="BUS_3",
+            p0=0.05,
+            q0=0.02
+        )
 
-    # ----------------------------
-    # 100 kW Microhydro generator
-    # ----------------------------
-    network.create_generators(
-        id='HYDRO',
-        voltage_level_id='LV',
-        bus_id='BUS4',
-        target_p=0.100,   # 100 kW
-        target_v=1.0,
-        min_p=0.0,
-        max_p=0.100,
-        voltage_regulator_on=False
-    )
+        # -----------------------------
+        # TRANSFORMER (12.47/0.48 kV)
+        # -----------------------------
+        self.network.create_2_windings_transformer(
+            id="TRAFO",
+            bus1_id="BUS_3",
+            bus2_id="BUS_LV",
+            rated_u1=12.47,
+            rated_u2=0.48,
+            r=0.012,
+            x=0.06
+        )
 
-    return network
+        # -----------------------------
+        # MICRO-HYDRO GENERATOR (100 kW)
+        # -----------------------------
+        self.network.create_generator(
+            id="HYDRO",
+            bus_id="BUS_LV",
+            p=0.10,
+            q=0.0,
+            voltage_regulator_on=True,
+            target_v=1.02
+        )
 
+    # -----------------------------
+    # 2. BASE LOAD FLOW
+    # -----------------------------
+    def run_loadflow(self):
+        result = lf.run_ac(self.network)
+        print("\nBASE CASE LOAD FLOW COMPLETED")
+        print(result)
 
-# ============================================================
-# 2. RUN LOAD FLOW
-# ============================================================
+    # -----------------------------
+    # 3. CONTINGENCY ANALYSIS
+    # -----------------------------
+    def run_contingencies(self):
+        print("\n==============================")
+        print("N-1 CONTINGENCY ANALYSIS")
+        print("==============================")
 
-def run_loadflow(network, case_name):
-    print("\n" + "=" * 60)
-    print(f"CASE: {case_name}")
-    print("=" * 60)
+        # Define contingencies
+        contingencies = sec.create_contingency_list()
 
-    result = pp.loadflow.run_ac(network)
+        contingencies.add_line_contingency("LINE_1_2")
+        contingencies.add_line_contingency("LINE_2_3")
+        contingencies.add_line_contingency("LINE_0_1")
+        contingencies.add_transformer_contingency("TRAFO")
+        contingencies.add_generator_contingency("HYDRO")
 
-    print("\nLoad Flow Status:")
-    print(result)
+        # Run security analysis
+        results = sec.run_ac_security_analysis(self.network, contingencies)
 
-    print("\nBus Results:")
-    buses = network.get_buses()
-    print(buses[['name', 'v_mag', 'connected_component']])
+        print(results)
 
-    print("\nLine Results:")
-    lines = network.get_lines()
-    print(lines[['name', 'connected1', 'connected2']])
+    # -----------------------------
+    # 4. SIMPLE SECURITY CHECKS
+    # -----------------------------
+    def check_violations(self):
+        lf.run_ac(self.network)
 
-    print("\nTransformer Results:")
-    transformers = network.get_2_windings_transformers()
-    print(transformers[['name', 'connected1', 'connected2']])
+        buses = self.network.get_buses()
+        lines = self.network.get_lines()
 
+        print("\n==============================")
+        print("VOLTAGE PROFILE")
+        print("==============================")
 
-# ============================================================
-# 3. CONTINGENCY CASES
-# ============================================================
+        for _, row in buses.iterrows():
+            v = row.get("v_mag", None)
+            print(row.name, "V =", v)
 
-def contingency_line1_outage():
-    net = build_network()
-    net.disconnect('L1')
-    run_loadflow(net, "Contingency A: Line 1 Outage")
+        print("\n==============================")
+        print("LINE FLOW CHECK")
+        print("==============================")
 
-
-def contingency_line2_outage():
-    net = build_network()
-    net.disconnect('L2')
-    run_loadflow(net, "Contingency B: Line 2 Outage")
-
-
-def contingency_transformer_outage():
-    net = build_network()
-    net.disconnect('T1')
-    run_loadflow(net, "Contingency C: Transformer Outage")
+        print(lines)
 
 
-def contingency_generator_outage():
-    net = build_network()
-    net.disconnect('HYDRO')
-    run_loadflow(net, "Contingency D: Generator Outage")
-
-
-# ============================================================
-# 4. MAIN
-# ============================================================
-
+# -----------------------------
+# MAIN EXECUTION
+# -----------------------------
 if __name__ == "__main__":
+    study = HydroPowSyBlStudy()
 
-    # Base Case
-    base_network = build_network()
-    run_loadflow(base_network, "Base Case")
-
-    # Contingencies
-    contingency_line1_outage()
-    contingency_line2_outage()
-    contingency_transformer_outage()
-    contingency_generator_outage()
+    study.build_network()
+    study.run_loadflow()
+    study.check_violations()
+    study.run_contingencies()
