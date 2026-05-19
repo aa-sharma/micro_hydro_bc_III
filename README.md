@@ -43,7 +43,7 @@ This simulation models the behaviour when the dedicated feeder connecting the mi
 
  <img src="outputs/l3_outage.png" width="100%">
 
-This simulation converges. L3 is the link to the micro-hydro substation which fails but th rest of the grid (bus 1 and 2) stay online.
+This simulation converges. L3 is the link to the micro-hydro substation which fails but the rest of the grid (bus 1 and 2) stay online.
 
 #### Case 2: Transformer Outage
 
