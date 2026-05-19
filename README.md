@@ -48,7 +48,7 @@ This simulation converges. L3 is the link to the micro-hydro substation which fa
 #### Case 2: Transformer Outage
 
  <img src="outputs/t1_outage.png" width="100%">
-Transformer outage isolates generator from utility though the rest of the grid (HV side) continues to function with stability.
+The simulation convergest, indicating that a ransformer outage isolates the micro-hydro generator from the utility though the rest of the grid (HV side) continues to function with stability.
 
 #### Case 3: Generator Outage
 
