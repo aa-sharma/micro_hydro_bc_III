@@ -32,7 +32,7 @@ The simulation does not converge (SOLVER_FAILED). Due to the radial topology, wh
 
 
 ##### 1.2: Line 2 Outage (Bus1 - Bus2)
-This simulation models the behaviour when the internal trunk line that between local load centers fails
+This simulation models the behaviour when the internal trunk line between local load centers fails
 
  <img src="outputs/l2_outage.png" width="100%">
 
