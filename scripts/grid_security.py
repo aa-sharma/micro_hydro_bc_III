@@ -1,8 +1,7 @@
 """
 MICRO-HYDROPOWER DESIGN PART III
-GRID SECURITY, CONTINGENCY & PROTECTION ANALYSIS (POWSYBL)
+FAULT PROTECTION & CONTINGENCY MODELLING
 
-Matches Part II pandapower topology:
 Slack → Bus1 → Bus2 → Bus3 → Transformer → Micro-hydro (0.48 kV)
 """
 import pypowsybl as psb
@@ -58,7 +57,6 @@ class GridSecurity:
         )
 
         # 5. Transformer (The "Bridge")
-        # We use a very low impedance to ensure the solver 'links' the two voltage levels
         self.net.create_2_windings_transformers(
             id="T1",
             voltage_level1_id="VL_Hydro_HV", bus1_id="Bus_3",
@@ -88,14 +86,10 @@ class GridSecurity:
         print("\n--- Generating Network Diagrams ---")
         
         # 1. Global Network Area Diagram (Shows the whole topology)
-        # This renders the connections between voltage levels/substations
         self.net.write_network_area_diagram_svg(f"{filename_prefix}_area.svg")
         print(f"Global diagram saved to: {filename_prefix}_area.svg")
 
         # 2. Detailed Single Line Diagram (SLD) for a specific Substation
-        # We'll use 'Sub_Hydro' since it has the transformer and generators
-
-        
         sld_params = psb.network.SldParameters(
             use_name=True,             # Uses "L1", "L2", etc.
             # show_labels=True,          # Explicitly force equipment IDs to show
@@ -114,7 +108,7 @@ class GridSecurity:
 
 
     # -----------------------------
-    # 2. BASE LOAD FLOW
+    # BASE LOAD FLOW
     # -----------------------------
     def run_loadflow(self):
         result = psb.loadflow.run_ac(self.net)
@@ -153,7 +147,7 @@ class GridSecurity:
         # result = psb.loadflow.run_ac(self.net)
 
     # -----------------------------
-    # 4. SIMPLE SECURITY CHECKS
+    # SIMPLE SECURITY CHECKS
     # -----------------------------
     def check_violations(self):
         psb.loadflow.run_ac(self.net)
@@ -200,7 +194,6 @@ class GridSecurity:
         )
 
         # 4. Run the AC Analysis
-        # We pass the network here. Result will contain bus_results and branch_results
         results = analysis.run_ac(self.net)
         print(f"\nResults: {results}\n")
 
@@ -221,8 +214,6 @@ class GridSecurity:
         print(results.branch_results)
 
         # 8. Detect Supply Interruption / Islanding
-        # If a contingency leads to divergence or zero flow in branch results, 
-        # it indicates a supply interruption.
         for cont_id, post_res in results.post_contingency_results.items():
             print(f"\npost_res: {post_res}\n")
             if not post_res.status != ComponentStatus.CONVERGED:
@@ -237,5 +228,4 @@ if __name__ == "__main__":
     gs_obj.generate_visuals()
     gs_obj.run_analysis()
     gs_obj.run_security_analysis()
-    # gs_obj.line_outage(line_id='L1')
 
