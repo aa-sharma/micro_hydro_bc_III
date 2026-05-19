@@ -6,7 +6,7 @@ We will now conduct a simiplified grid security and protection analysis using Po
 As defined in Part II, we are working with the following topology where VL_main is the external grid, and VL_Hydro is the micro-hydro generator:
 #### Network Area Diagram
 
- <img src="network_area_diagram.svg" width="100%">
+ <img src="network_area_diagram.svg" width="80%">
 
 
 #### Single Line Diagram
