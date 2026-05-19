@@ -19,7 +19,7 @@ The pypowsybl library in python is used for simulation.
 
 ### Load Flow Validation (Base Case)
  <img src="outputs/base_case_lf.png" width="100%">
-Since this simulation converged, we can conclude that the base case is stable under normal conditions.
+Since this simulation converged, we can conclude that the base case is stable under normal operating conditions.
 
 ### N-1 Contingency Analysis
 #### Case 1: Line Outages
