@@ -26,26 +26,32 @@ The pypowsybl library in python is used for simulation.
 ##### 1.1: Line 1 Outage (Bus_Slack - Bus1)
 This simulation models the behaviour when the main feeder (or primary transmission line) is disconnected from the Slack (external grid)
 
- <img src="outputs/base_case_lf.png" width="100%">
+ <img src="outputs/l1_outage.png" width="100%">
 
 
 
 ##### 1.2: Line 2 Outage (Bus1 - Bus2)
 This simulation models the behaviour when the internal trunk line that between local load centers fails
 
+ <img src="outputs/l2_outage.png" width="100%">
+
 
 
 ##### 1.3: Line 3 Outage (Bus2 - Bus3)
 This simulation models the behaviour when the dedicated feeder connecting the micro-hydro generator is disconnected
 
+ <img src="outputs/l3_outage.png" width="100%">
+
 
 
 #### Case 2: Transformer Outage
 
+ <img src="outputs/t1_outage.png" width="100%">
 
 
 #### Case 3: Generator Outage
 
+ <img src="outputs/gen_outage.png" width="100%">
 
 
 #### Summary of N-1 Contingency Analysis
