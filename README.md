@@ -47,7 +47,7 @@ This simulation models the behaviour when the dedicated feeder connecting the mi
 #### Case 2: Transformer Outage
 
  <img src="outputs/t1_outage.png" width="100%">
-
+Transformer outage isolates generator from utility though the rest of the system continues to function.
 
 #### Case 3: Generator Outage
 
