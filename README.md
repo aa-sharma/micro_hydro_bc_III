@@ -107,8 +107,8 @@ This zone covers Bus3 / transformer HV side at the Point of Common Coupling (PCC
 1. Anti-islanding - Disconnect micro-hydro generator if utility grid lost. Without anti-islanding, the generator might continue to power a "dead" section of the grid. This is dangerous for utility workers and can lead to unsynchronized re-closing
 
 To implement anti-islanding, the following is required:
-3. Rate of Change of Frequency (ROCOF) - Detects sudden grid separation. If frequency change is greater than threshold, relay should trip.
-4. Synchronosim Check - Checks and matches voltage magnitude, phase angle, and frequency with the utility grid
+1. Rate of Change of Frequency (ROCOF) - Detects sudden grid separation. If frequency change is greater than threshold, relay should trip.
+2. Synchronosim Check - Checks and matches voltage magnitude, phase angle, and frequency with the utility grid
 
 These mechanisms ensure rapid disconnection of the micro-hydropower generator under abnormal grid conditions.
 
