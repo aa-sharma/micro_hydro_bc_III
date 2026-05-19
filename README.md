@@ -69,5 +69,8 @@ The simulation converges, demonstrating that when the micro-hydro generator trip
 
 ## Proposed Protection Schemes
 
-### Redundancy
+### Ring Topology
 Implementing a ring topology instead of a radial topology, where either Bus2 or Bus3 is also connected back to the Slack bus via  a separate path ensures N-1 compliance. Even if a line in the loop fails, the micro-hydro plant will still be able to export power to the grid.
+
+### Anti-Islanding
+
