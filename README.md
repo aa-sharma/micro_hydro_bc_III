@@ -16,7 +16,7 @@ As defined in Part II, we are working with the following topology where VL_main 
 
 
 ## Simulation
-The [pypowsybl](https://powsybl.readthedocs.io/projects/pypowsybl/en/stable/) library in python is used for simulating the base case load flow analysis, as well as the fault and contingency cases..
+The [pypowsybl](https://powsybl.readthedocs.io/projects/pypowsybl/en/stable/) library in python is used for simulating the base case load flow analysis, as well as the fault and contingency cases.
 
 ### Load Flow Validation (Base Case)
  <img src="outputs/base_case_lf.png" width="100%">
