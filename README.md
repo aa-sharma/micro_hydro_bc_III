@@ -28,7 +28,7 @@ This simulation models the behaviour when the main feeder (or primary transmissi
 
  <img src="outputs/l1_outage.png" width="100%">
 
-The simulation does not converge (SOLVER_FAILED). Due to the radial topology, when line 1 fails, everything downstream loses connection to the slack bus. Without the reference bus (slack) and a secondary path to the external grid, the simulation fails because the power can no longer be balanced.
+The simulation does not converge (SOLVER_FAILED). Due to the radial topology, when line 1 fails, all components downstream loses connection to the slack bus. Without the reference bus (slack) and a secondary path to the external grid, the simulation fails because the power can no longer be balanced in the subsequently formed island.
 
 
 ##### 1.2: Line 2 Outage (Bus1 - Bus2)
