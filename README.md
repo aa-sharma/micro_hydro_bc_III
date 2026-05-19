@@ -9,7 +9,7 @@ We will now conduct a simiplified grid security and protection analysis using Po
 
 #### Single Line Diagram
 
- <img src="single_line_diagram.svg" width="100%">
+ <img src="single_line_diagram.svg" width="75%">
 
 
 
