@@ -28,6 +28,7 @@ This simulation models the behaviour when the main feeder (or primary transmissi
 
  <img src="outputs/l1_outage.png" width="100%">
 
+The simulation does not converge (SOLVER_FAILED). Due to the radial topology, when line 1 fails, everything downstream loses connection to the slack bus. Without the reference bus (slack) and a secondary path to the external grid, the simulation fails because the power can no longer be balanced.
 
 
 ##### 1.2: Line 2 Outage (Bus1 - Bus2)
@@ -35,24 +36,24 @@ This simulation models the behaviour when the internal trunk line that between l
 
  <img src="outputs/l2_outage.png" width="100%">
 
-
+The results for this case can be interpreted in the same way as for case 1.1.
 
 ##### 1.3: Line 3 Outage (Bus2 - Bus3)
 This simulation models the behaviour when the dedicated feeder connecting the micro-hydro generator is disconnected
 
  <img src="outputs/l3_outage.png" width="100%">
 
-
+This simulation converges. L3 is the link to the micro-hydro substation which fails but th rest of the grid (bus 1 and 2) stay online.
 
 #### Case 2: Transformer Outage
 
  <img src="outputs/t1_outage.png" width="100%">
-Transformer outage isolates generator from utility though the rest of the system continues to function.
+Transformer outage isolates generator from utility though the rest of the grid (HV side) continues to function with stability.
 
 #### Case 3: Generator Outage
 
  <img src="outputs/gen_outage.png" width="100%">
-
+The simulation converges, demonstrating that when the micro-hydro generator trips, the external grid picks up the extra load and the voltages stay relatively stable.
 
 #### Summary of N-1 Contingency Analysis
 
