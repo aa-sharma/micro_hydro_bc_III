@@ -2,6 +2,8 @@
 > This projects build on [Part I - Site Assessment](https://github.com/aa-sharma/micro_hydro_bc) and [Part II - Grid Integration & Power System Modelling](https://github.com/aa-sharma/micro_hydro_bc_II/tree/main) where we identified candidate locations for a micro-hydropower plant in rural Southwest British Columbia and conducted load flow analysis for a 100kW plant.
 We will now conduct a simiplified grid security and protection analysis using PowSyBl for contingency and outage analysis. We will then apply foundational protection and reliability concepts relevant to distribution interconnection using the IEEE 1547 standards as a guide.
 
+
+As defined in Part II, we are working with the following power network topology:
 #### Network Area Diagram
 
  <img src="network_area_diagram.svg" width="100%">
@@ -13,9 +15,8 @@ We will now conduct a simiplified grid security and protection analysis using Po
 
 
 
-
 ## Simulation
-The pypowsybl library in python is used for simulation.
+The [pypowsybl](https://powsybl.readthedocs.io/projects/pypowsybl/en/stable/) library in python is used for simulating the base case load flow analysis, as well as the fault and contingency cases..
 
 ### Load Flow Validation (Base Case)
  <img src="outputs/base_case_lf.png" width="100%">
