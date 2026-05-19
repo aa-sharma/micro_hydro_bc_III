@@ -69,8 +69,62 @@ The simulation converges, demonstrating that when the micro-hydro generator trip
 
 ## Proposed Protection Schemes
 
+| Zone| Equipment | Protection |
+| ---------- | ----- | ----------|
+| Feeder | Lines and loads | OC relay, breaker |
+| Transformer | Step-up transformer | Differential and OC |
+| Generator | Micro-hydro generator | V/F/reverse power |
+| PCC | Interconnection point to ex.t grid | Anti-islanding |
+
+
+### Feeder Protection Zone
+This zone covers the 12.47kV radial feeder:
+* Slack Bus - Bus1
+* Bus1 - Bus2
+* Bus2 - Bus3
+* Connected loads
+
+The proposed protection mechanisms for this zone include:
+1. Overcurrent Relay (OC) - If current exceeds threshold, trip breaker
+2. Breaker - Installed between Slack Bus and Bus1
+
+This mechanism will isolate the faulted segments, providing protection from line-to-ground faults, line-to-line faults, overloads, short circuits, and downstream faults.
+
+
+### Transformer Protection Zone
+This zone covers the 12.4k kV / 0.48kV step-up transformer. Differential protection is proposed for this zone, where the current entering the transformer is compared with the current leaving it. If they are not equal (after ratio adjustment), this indicates an internal fault which will trip the OC relay. This ensures that if the transformer faults, the micro-hydro plant is isolated immediately and the feeder is not exposed.
+
+### Generator Protection Zone
+This zone covers the 100kW micro-hydro generator and its associated terminals. The proposed protection mechanisms for this zone include:
+1. Voltage protection (ex. 0.88 pu < V < 1.10 pu)
+2. Frequency protection
+3. Reverse power
+
+If any abnormal conditions are detected (beyond given thresholds), the protective relay opens a breaker to disconnect and isolate the generator.
+
+### PCC / Interconnection Protection Zone
+This zone covers Bus3 / transformer HV side at the Point of Common Coupling (PCC) - interface between utility grid and DER (micro-hydro). Proposed protection functions include:
+1. Anti-islanding - Disconnect micro-hydro generator if utility grid lost
+2. Rate of Change of Frequency (ROCOF) - Detects sudden grid separation. If frequency change is greater than threshold, relay should trip.
+3. Synchronosim Check - Checks and matches voltage magniture, phase angle, and frequency with the utility grid
+
+These mechanisms ensure rapid disconnection of the micro-hydropower generator under abnormal grid conditions.
+
+Grid
+ |
+Bus1
+ |
+Bus2
+ |
+Bus3
+ |
+PCC Breaker + Protection Relay
+ |
+Transformer
+ |
+Hydro Generator
+
+
+### Other Recommendations
 ### Ring Topology
-Implementing a ring topology instead of a radial topology, where either Bus2 or Bus3 is also connected back to the Slack bus via  a separate path ensures N-1 compliance. Even if a line in the loop fails, the micro-hydro plant will still be able to export power to the grid.
-
-### Anti-Islanding
-
+Implementing a ring topology instead of a radial topology, where either Bus2 or Bus3 is also connected back to the Slack bus via  a separate path ensures N-1 compliance. Even if a line in the loop fails, the micro-hydro plant will still be able to export power to the grid. The advantage with radial feeders is that fault current flows in one direction so coordination when something wrong happens is straightforward.
