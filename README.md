@@ -106,7 +106,7 @@ If any abnormal conditions are detected (beyond given thresholds), the protectiv
 This zone covers Bus3 / transformer HV side at the Point of Common Coupling (PCC) - interface between utility grid and DER (micro-hydro). Proposed protection functions include:
 1. Anti-islanding - Disconnect micro-hydro generator if utility grid lost. Without anti-islanding, the generator might continue to power a "dead" section of the grid. This is dangerous for utility workers and can lead to unsynchronized re-closing
 
-To implement anti-islanding, the following is required:
+When the grid is lost, the micro-hydro turbine will either speed up or slow down instantly because the load no longer matches the generation. To implement anti-islanding, the following is required:
 1. Rate of Change of Frequency (ROCOF) - Detects sudden grid separation. If frequency change is greater than threshold, relay should trip.
 2. Synchronosim Check - Checks and matches voltage magnitude, phase angle, and frequency with the utility grid
 
