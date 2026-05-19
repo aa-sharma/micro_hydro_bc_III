@@ -3,7 +3,7 @@
 We will now conduct a simiplified grid security and protection analysis using PowSyBl for contingency and outage analysis. We will then apply foundational protection and reliability concepts relevant to distribution interconnection using the IEEE 1547 standards as a guide.
 
 
-As defined in Part II, we are working with the following power network topology:
+As defined in Part II, we are working with the following topology:
 #### Network Area Diagram
 
  <img src="network_area_diagram.svg" width="100%">
