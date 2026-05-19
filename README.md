@@ -11,7 +11,7 @@ As defined in Part II, we are working with the following topology where VL_main 
 
 #### Single Line Diagram
 
- <img src="single_line_diagram.svg" width="75%">
+ <img src="single_line_diagram.svg" width="60%">
 
 
 
