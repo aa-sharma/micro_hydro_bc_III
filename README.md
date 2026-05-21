@@ -3,7 +3,9 @@
 We will now conduct a simiplified grid security and protection analysis using PowSyBl for contingency and outage analysis. We will then apply foundational protection and reliability concepts relevant to distribution interconnection using the IEEE 1547 standards as a guide.
 
 
+## System
 As defined in Part II, we are working with the following topology where VL_main is the external grid, and VL_Hydro is the micro-hydro generator:
+
 #### Network Area Diagram
 
  <img src="network_area_diagram.svg" width="80%">
@@ -16,7 +18,15 @@ As defined in Part II, we are working with the following topology where VL_main 
 
 
 ## Simulation
-The [pypowsybl](https://powsybl.readthedocs.io/projects/pypowsybl/en/stable/) library in python is used for simulating the base case load flow analysis, as well as the fault and contingency cases.
+The [pypowsybl](https://powsybl.readthedocs.io/projects/pypowsybl/en/stable/) library in python is used for simulating the base case load flow analysis, as well as the fault and contingency cases (N-1 analysis). The following cases will be studied:
+1. Base case load flow
+2. Line1 outage (between Bus_slack and Bus1)
+3. Line2 outage (between Bus1 and Bus2)
+4. Line3 outage (between Bus2 and Bus3)
+5. Transformer outage
+6. Generator outage
+
+Following the simulations, protection schemes will be proposed to mitigate weaknesses in the system.
 
 ### Load Flow Validation (Base Case)
  <img src="outputs/base_case_lf.png" width="100%">
